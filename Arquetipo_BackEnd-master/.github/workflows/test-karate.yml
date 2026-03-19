@@ -1,0 +1,46 @@
+
+name: Ejecutar pruebas Karate por entorno
+
+on:
+  push:
+    branches: [ develop, release, master ]
+  pull_request:
+    branches: [ develop, release, master ]
+
+jobs:
+  test-karate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Determinar entorno
+        id: set-env
+        run: |
+          if [[ "${GITHUB_REF}" == *"develop" ]]; then
+            echo "KARATE_ENV=dev" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == *"release" ]]; then
+            echo "KARATE_ENV=qa" >> $GITHUB_ENV
+          elif [[ "${GITHUB_REF}" == *"master" ]]; then
+            echo "KARATE_ENV=prod" >> $GITHUB_ENV
+          else
+            echo "KARATE_ENV=dev" >> $GITHUB_ENV
+
+      - name: Ejecutar pruebas Karate
+        run: ./gradlew test -Dkarate.env=${{ env.KARATE_ENV }}
+
+      - name: Publicar reportes de Karate
+        uses: actions/upload-artifact@v4
+        with:
+          name: karate-reports
+          path: target/karate-reports
