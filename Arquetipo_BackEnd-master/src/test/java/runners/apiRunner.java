@@ -4,8 +4,11 @@ import com.intuit.karate.junit5.Karate;
 
 public class apiRunner {
     @Karate.Test
-    Karate testAll() {
+    Karate principal() {
         //Testear todas las features
-        return Karate.run("classpath:features").relativeTo(getClass());
+        return Karate.run("classpath:features").tags("@pokemon");
     }
 }
+
+
+//relativeTo(getClass());
