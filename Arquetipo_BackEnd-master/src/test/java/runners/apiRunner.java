@@ -6,7 +6,7 @@ public class apiRunner {
     @Karate.Test
     Karate principal() {
         //Testear todas las features
-        return Karate.run("classpath:features").tags("@pokemon");
+        return Karate.run("classpath:features").tags("@pokemon_evolution");
     }
 }
 
